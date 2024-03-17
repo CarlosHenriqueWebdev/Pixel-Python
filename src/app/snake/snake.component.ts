@@ -736,10 +736,20 @@ export class SnakeComponent implements OnInit, AfterViewInit {
 
     switch (keyBoardEvent.key) {
       case 'ArrowUp':
+      case 'w':
+        this.moveQueue.push('ArrowUp');
+        break;
       case 'ArrowDown':
+      case 's':
+        this.moveQueue.push('ArrowDown');
+        break;
       case 'ArrowLeft':
+      case 'a':
+        this.moveQueue.push('ArrowLeft');
+        break;
       case 'ArrowRight':
-        this.moveQueue.push(keyBoardEvent.key);
+      case 'd':
+        this.moveQueue.push('ArrowRight');
         break;
     }
 
