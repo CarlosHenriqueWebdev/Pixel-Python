@@ -1,1 +1,64 @@
 /* You can add global styles to this file, and also import other style files */
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+@font-face {
+  font-family: "StickNoBills"; /* Choose a name for your font */
+  src: url("./assets/stick.ttf") format("truetype"); /* Path to your font file */
+  /* Add more src declarations if you have different font formats (e.g., woff, ttf) */
+}
+@font-face {
+  font-family: "Roboto"; /* Choose a name for your font */
+  src: url("./assets/Roboto-Bold.ttf") format("truetype"); /* Path to your font file */
+  /* Add more src declarations if you have different font formats (e.g., woff, ttf) */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Roboto", Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: black;
+  color: #d2ddb4;
+}
+
+app-snake {
+  height: 100%;
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+}
+
+@media screen and (max-width: 680px) {
+  app-snake {
+    height: 600px;
+    overflow: hidden;
+  }
+}
+
+// For bootstrap
+* {
+  box-sizing: initial;
+}
+
+p,
+h3,
+h1,
+h2 {
+  margin-bottom: 0;
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1;
+  color: #d2ddb4;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.bg-dark-charcoal {
+  background-color: #0f0f0f;
+}

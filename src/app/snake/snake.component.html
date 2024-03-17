@@ -1,0 +1,244 @@
+<div class="scale-container" style="margin-top: 48px; margin-bottom: 48px">
+  <div
+    class="d-flex justify-content-between align-items-center px-3 pb-1"
+    style="font-size: 18px"
+  >
+    <div class="d-flex gap-2 align-items-center">
+      <div
+        style="
+          box-sizing: border-box;
+          width: 18px;
+          height: 18px;
+          padding: 2px;
+          border: 2px solid;
+          border-image: linear-gradient(#c4d0a2, #646a53);
+          border-image-slice: 1;
+        "
+      >
+        <div
+          style="
+            background: linear-gradient(#c4d0a2, #646a53);
+            width: 100%;
+            height: 100%;
+          "
+        ></div>
+      </div>
+      <span #snakeLength class="text-gradient">{{ targetScore }}</span>
+    </div>
+
+    <div class="d-flex gap-2 align-items-center">
+      <img src="../../assets/crown.svg" />
+
+      <span class="text-gradient" style="height: 22px">{{ highestScore }}</span>
+    </div>
+  </div>
+
+  <div
+    class="overflow-hidden"
+    style="border: 12px solid #5c6249; border-radius: 4px"
+  >
+    <div class="overflow-hidden" style="border: 6px solid #adb890">
+      <div class="overflow-hidden" style="border: 14px solid #8a956d">
+        <div
+          class="overflow-hidden"
+          style="border: 3px solid black; position: relative"
+        >
+          <div
+            class="pause-container hidden h-100 w-100 align-items-center text-uppercase font-weight-bold justify-content-center position-absolute"
+            style="z-index: 3"
+          >
+            <div
+              class="d-flex flex-column align-items-center p-3 rounded gap-3"
+              style="background: black"
+            >
+              <h3 class="text-gradient" style="font-size: 22px">Game Paused</h3>
+
+              <p
+                class="text-gradient"
+                style="
+                  font-size: 14px;
+                  font-family: 'StickNoBills', 'Roboto', Arial;
+                "
+              >
+                Press space to resume
+              </p>
+            </div>
+          </div>
+
+          <div
+            class="d-flex justify-content-center align-items-center position-absolute w-100 h-100 text-uppercase font-weight-bold"
+            style="
+              font-family: 'StickNoBills', 'Roboto', Arial, sans-serif;
+              z-index: 5;
+              background-color: rgba(0, 0, 0, 0.85);
+            "
+            *ngIf="countdownValue !== null"
+          >
+            <div
+              class="text-center py-4 px-4"
+              style="
+                width: 110px;
+                border: 2px solid #545454;
+                background: black;
+                border-radius: 8px;
+              "
+            >
+              <h3 class="text-gradient" style="font-size: 80px">
+                {{ countdownValue }}
+              </h3>
+            </div>
+          </div>
+
+          <div
+            class="start-game-container d-none position-absolute w-100 h-100 justify-content-center align-items-center flex-column text-uppercase gap-4"
+            style="z-index: 10; background-color: black"
+            [class.show-hidden-screen]="isStartMenu"
+          >
+            <h1 class="text-gradient" style="font-size: 28px">Pixel Python</h1>
+
+            <Button (click)="startGame()">
+              <span class="text-gradient">Start Game</span></Button
+            >
+          </div>
+
+          <div
+            class="game-over-container d-none position-absolute w-100 h-100 justify-content-center align-items-center flex-column text-uppercase gap-4"
+            style="z-index: 10; background-color: black"
+            [class.show-hidden-screen]="isGameOver"
+          >
+            <h2
+              class="text-gradient"
+              style="letter-spacing: 6px; font-size: 24px"
+            >
+              {{ isAGameWin ? "You Win!" : "Game Over" }}
+            </h2>
+
+            <Button (click)="restartGame()">
+              <span class="text-gradient">{{
+                isAGameWin ? "Play Again?" : "Try Again?"
+              }}</span></Button
+            >
+
+            <div class="d-flex gap-2 align-items-center">
+              <div
+                style="
+                  box-sizing: border-box;
+                  width: 18px;
+                  height: 18px;
+                  padding: 2px;
+                  border: 2px solid;
+                  border-image: linear-gradient(#c4d0a2, #646a53);
+                  border-image-slice: 1;
+                "
+              >
+                <div
+                  style="
+                    background: linear-gradient(#c4d0a2, #646a53);
+                    width: 100%;
+                    height: 100%;
+                  "
+                ></div>
+              </div>
+
+              <p class="text-gradient">
+                Score:
+                <span #snakeLengthGameOver>
+                  {{ targetScore }}
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div #gameCanvas class="grid-container">
+            <div *ngFor="let row of boardRowsAmount" class="grid-row">
+              <div
+                *ngFor="let col of boardCollumsAmount"
+                class="grid-cell"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="show-on-desktop hide-on-mobile align-items-center font-weight-bold fs-5 gap-5 justify-content-center mt-4 text-uppercase"
+  >
+    <div
+      class="d-flex flex-column gap-2 justify-content-center align-items-center"
+    >
+      <img style="height: 32px" src="../../assets/arrowkeys.svg" alt="" />
+
+      <p class="text-gradient">Move</p>
+    </div>
+
+    <div
+      class="d-flex flex-column gap-2 justify-content-center align-items-center spaceBarControl"
+    >
+      <img style="height: 32px" src="../../assets/spacebar.svg" alt="" />
+
+      <p class="text-gradient">Pause</p>
+    </div>
+
+    <div
+      class="d-flex flex-column gap-2 justify-content-center align-items-center muteControl"
+    >
+      <img style="height: 32px" src="../../assets/fkey.svg" alt="" />
+
+      <p class="text-gradient">Mute</p>
+    </div>
+  </div>
+
+  <div
+    class="hide-on-desktop flex-column justify-content-center align-items-center mt-4"
+  >
+    <div
+      class="d-flex align-items-center justify-content-center text-uppercase fw-bold gap-4"
+      style="margin-bottom: 100px"
+    >
+      <div
+        class="p-4 border border-3 border-secondary rounded cursor-pointer bg-dark-charcoal spaceBarControl"
+      >
+        <p class="text-gradient">Pause</p>
+      </div>
+
+      <div
+        class="p-4 border border-3 border-secondary rounded cursor-pointer bg-dark-charcoal muteControl"
+      >
+        <p class="text-gradient">Mute</p>
+      </div>
+    </div>
+
+    <div class="position-relative" style="transform: scale(1.4)">
+      <div
+        id="downArrow"
+        class="position-absolute cursor-pointer"
+        style="opacity: 0; width: 74px; height: 85px; top: 169px; left: 91px"
+      ></div>
+      <div
+        id="upArrow"
+        class="position-absolute cursor-pointer"
+        style="opacity: 0; width: 74px; height: 85px; top: 0px; left: 91px"
+      ></div>
+      <div
+        id="leftArrow"
+        class="position-absolute cursor-pointer"
+        style="opacity: 0; width: 75px; height: 85px; top: 90px; left: 0px"
+      ></div>
+      <div
+        id="rightArrow"
+        class="position-absolute cursor-pointer"
+        style="opacity: 0; width: 75px; height: 85px; top: 90px; right: 0px"
+      ></div>
+
+      <img src="../../assets/mobile-arrow-keys.png" alt="" />
+    </div>
+  </div>
+</div>
+
+<audio id="startGameAudio" src="../../assets/startGameSound.wav"></audio>
+<audio id="snakeHitAudio" src="../../assets/snake-hit.wav"></audio>
+<audio id="eatFoodAudio" src="../../assets/eating-food.wav"></audio>
+<audio id="rareEatFoodAudio" src="../../assets/rare-eating-food.wav"></audio>
+<audio id="snakeMoveAudio" src="../../assets/snake-move.wav"></audio>
