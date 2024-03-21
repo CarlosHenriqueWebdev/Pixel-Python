@@ -158,8 +158,8 @@ button:active {
   margin: 0;
 }
 .grid-container {
-  width: 560px;
-  height: 336px;
+  width: 568px;
+  height: 344px;
   background-color: #c4d0a3;
   margin: 0px auto;
   position: relative;
@@ -172,7 +172,8 @@ button:active {
 }
 
 .grid-cell {
-  height: 26px;
+  height: 28px;
+  width: 28px;
   border: 1px solid #343434;
 }
 .snake-segment {
