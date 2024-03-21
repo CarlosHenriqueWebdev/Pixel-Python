@@ -56,7 +56,7 @@ export class SnakeComponent implements OnInit, AfterViewInit {
   lastMoveTime: number = 0;
   moveInterval: number = 140;
   moveQueue: string[] = [];
-  previousMove: string | null = null;
+  previousMove: string = '';
   isTheFirstMoveProcessed: boolean = true;
   targetScore: number = 0;
   highestScore: number = 0;
@@ -71,6 +71,8 @@ export class SnakeComponent implements OnInit, AfterViewInit {
   isCountdownRunning: boolean = false;
   winLength: number = 240;
   wasKeyboardEvent = true;
+  antiKeyHolding: boolean = false;
+  fKeyPressed: boolean = false;
 
   constructor(private renderer: Renderer2, private cdr: ChangeDetectorRef) {}
 
@@ -90,7 +92,22 @@ export class SnakeComponent implements OnInit, AfterViewInit {
         'keydown',
         (keyBoardEvent: KeyboardEvent) => {
           this.handleKeyPress(keyBoardEvent); // Handle arrow key press
-          this.handleSpaceAndFKeyPress(keyBoardEvent); // Handle spacebar and 'f' key press
+
+          if (!this.antiKeyHolding) {
+            this.antiKeyHolding = true;
+
+            this.handleSpaceAndFKeyPress(keyBoardEvent); // Handle spacebar and 'f' key press
+          }
+        }
+      );
+
+      this.renderer.listen(
+        'document',
+        'keyup',
+        (keyBoardEvent: KeyboardEvent) => {
+          if (this.antiKeyHolding) {
+            this.antiKeyHolding = false;
+          }
         }
       );
     };
@@ -234,30 +251,19 @@ export class SnakeComponent implements OnInit, AfterViewInit {
       audioElements.forEach((individualAudio: HTMLAudioElement) => {
         individualAudio.volume = mutedVolume;
       });
-
-      updateMuteUI(); // Update UI after changing volume
-      updateAudioVolume(); // Call itself to apply changes
     };
 
     updateMuteUI(); // Update UI immediately
     updateAudioVolume(); // Update audio volume immediately
   }
 
-  playSound(
-    soundType:
-      | 'startGame'
-      | 'snakeHit'
-      | 'eatFood'
-      | 'snakeMove'
-      | 'rareEatFood'
-  ) {
+  playSound(soundType: 'startGame' | 'snakeHit' | 'eatFood' | 'snakeMove') {
     if (!this.isMuted) {
       // Map sound types to corresponding audio element IDs
       const audioIdMap = {
         startGame: 'startGameAudio',
         snakeHit: 'snakeHitAudio',
         eatFood: 'eatFoodAudio',
-        rareEatFood: 'rareEatFoodAudio',
         snakeMove: 'snakeMoveAudio',
       };
 
@@ -368,7 +374,18 @@ export class SnakeComponent implements OnInit, AfterViewInit {
         this.isGameOver = false;
         this.lockControls = false;
         this.isTheFirstMoveProcessed = true;
-        this.previousMove = null;
+        this.previousMove = '';
+
+        const snakeIllustrations = document.querySelectorAll(
+          '.snake-illustration'
+        );
+        const pauseContainerElement =
+          document.querySelector('.pause-container');
+
+        this.renderer.addClass(pauseContainerElement, 'hidden');
+        snakeIllustrations.forEach((snakeIllustration: Element) => {
+          this.renderer.removeClass(snakeIllustration, 'increased-brightness');
+        });
 
         this.updateFoodPosition();
 
@@ -403,6 +420,16 @@ export class SnakeComponent implements OnInit, AfterViewInit {
       if (snakeLength > this.highestScore) {
         this.highestScore = snakeLength;
         localStorage.setItem('snakeHighestScore', this.highestScore.toString());
+      }
+
+      if (snakeLength >= this.winLength) {
+        const snakeIllustrations = document.querySelectorAll(
+          '.snake-illustration'
+        );
+
+        snakeIllustrations.forEach((snakeIllustration: Element) => {
+          this.renderer.addClass(snakeIllustration, 'increased-brightness');
+        });
       }
     }
   }
@@ -579,7 +606,7 @@ export class SnakeComponent implements OnInit, AfterViewInit {
       }
 
       // Update the previous move, handling the undefined case
-      this.previousMove = nextMove !== undefined ? nextMove : null;
+      this.previousMove = nextMove!;
       this.isTheFirstMoveProcessed = false;
     }
 
@@ -625,11 +652,7 @@ export class SnakeComponent implements OnInit, AfterViewInit {
       this.snakeFood.positionX === newHead.positionX &&
       this.snakeFood.positionY === newHead.positionY
     ) {
-      if (Math.random() < 0.1) {
-        this.playSound('rareEatFood');
-      } else {
-        this.playSound('eatFood');
-      }
+      this.playSound('eatFood');
 
       // Generate new snakeFood coordinates
       this.updateFoodPosition();
@@ -651,6 +674,32 @@ export class SnakeComponent implements OnInit, AfterViewInit {
     this.snakePlayer[0] = newHead;
   }
 
+  checkForOverlappingSegments() {
+    const gameCanvas = this.canvasRef.nativeElement;
+    const snakeSegments = gameCanvas.querySelectorAll('.snake-segment');
+
+    snakeSegments.forEach((segment: any, index: any) => {
+      const currentSegmentPosition = {
+        x: this.snakePlayer[index].positionX,
+        y: this.snakePlayer[index].positionY,
+      };
+
+      for (let i = index + 1; i < this.snakePlayer.length; i++) {
+        const nextSegmentPosition = {
+          x: this.snakePlayer[i].positionX,
+          y: this.snakePlayer[i].positionY,
+        };
+
+        if (
+          currentSegmentPosition.x === nextSegmentPosition.x &&
+          currentSegmentPosition.y === nextSegmentPosition.y
+        ) {
+          this.renderer.addClass(segment, 'hidden');
+        }
+      }
+    });
+  }
+
   clearCanvas() {
     const gameCanvas = this.canvasRef.nativeElement;
 
@@ -668,6 +717,8 @@ export class SnakeComponent implements OnInit, AfterViewInit {
 
     this.isGameRunning = false;
     this.lockControls = true;
+
+    this.checkForOverlappingSegments();
 
     const gameCanvas = this.canvasRef.nativeElement;
 
@@ -693,6 +744,7 @@ export class SnakeComponent implements OnInit, AfterViewInit {
   }
 
   handleSpaceAndFKeyPress(keyBoardEvent: KeyboardEvent) {
+    console.log();
     if (keyBoardEvent.key === 'f') {
       this.toggleMute();
     }
@@ -737,19 +789,43 @@ export class SnakeComponent implements OnInit, AfterViewInit {
     switch (keyBoardEvent.key) {
       case 'ArrowUp':
       case 'w':
-        this.moveQueue.push('ArrowUp');
+        if (
+          this.moveQueue[this.moveQueue.length - 1] !==
+            ('ArrowUp' && 'ArrowDown') &&
+          this.previousMove !== 'ArrowDown'
+        ) {
+          this.moveQueue.push('ArrowUp');
+        }
         break;
       case 'ArrowDown':
       case 's':
-        this.moveQueue.push('ArrowDown');
+        if (
+          this.moveQueue[this.moveQueue.length - 1] !==
+            ('ArrowDown' && 'ArrowUp') &&
+          this.previousMove !== 'ArrowUp'
+        ) {
+          this.moveQueue.push('ArrowDown');
+        }
         break;
       case 'ArrowLeft':
       case 'a':
-        this.moveQueue.push('ArrowLeft');
+        if (
+          this.moveQueue[this.moveQueue.length - 1] !==
+            ('ArrowLeft' && 'ArrowRight') &&
+          this.previousMove !== 'ArrowRight'
+        ) {
+          this.moveQueue.push('ArrowLeft');
+        }
         break;
       case 'ArrowRight':
       case 'd':
-        this.moveQueue.push('ArrowRight');
+        if (
+          this.moveQueue[this.moveQueue.length - 1] !==
+            ('ArrowRight' && 'ArrowLeft') &&
+          this.previousMove !== 'ArrowLeft'
+        ) {
+          this.moveQueue.push('ArrowRight');
+        }
         break;
     }
 

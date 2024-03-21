@@ -6,6 +6,10 @@
   filter: brightness(60%);
 }
 
+.increased-brightness {
+  filter: brightness(115%);
+}
+
 @keyframes bounceIn {
   0% {
     opacity: 0;
@@ -203,6 +207,10 @@ button:active {
   background: linear-gradient(#ff0000, #990000);
   width: 100%;
   height: 100%;
+}
+
+.black-only {
+  filter: grayscale(100%);
 }
 
 .show-on-desktop {
