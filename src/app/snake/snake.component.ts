@@ -375,6 +375,7 @@ export class SnakeComponent implements OnInit, AfterViewInit {
         this.lockControls = false;
         this.isTheFirstMoveProcessed = true;
         this.previousMove = '';
+        this.contradictingMove = false;
 
         const snakeIllustrations = document.querySelectorAll(
           '.snake-illustration'
@@ -573,7 +574,7 @@ export class SnakeComponent implements OnInit, AfterViewInit {
       const nextMove = this.moveQueue.shift();
 
       if (this.previousMove !== nextMove) {
-        if (!this.isTheFirstMoveProcessed) {
+        if (!this.isTheFirstMoveProcessed && !this.contradictingMove) {
           this.playSound('snakeMove');
         }
 
@@ -607,6 +608,7 @@ export class SnakeComponent implements OnInit, AfterViewInit {
 
       // Update the previous move, handling the undefined case
       this.previousMove = nextMove!;
+      this.contradictingMove = false;
       this.isTheFirstMoveProcessed = false;
     }
 
@@ -744,7 +746,6 @@ export class SnakeComponent implements OnInit, AfterViewInit {
   }
 
   handleSpaceAndFKeyPress(keyBoardEvent: KeyboardEvent) {
-    console.log();
     if (keyBoardEvent.key === 'f') {
       this.toggleMute();
     }
@@ -777,6 +778,8 @@ export class SnakeComponent implements OnInit, AfterViewInit {
     }
   }
 
+  contradictingMove: boolean = false;
+
   handleKeyPress(keyBoardEvent: KeyboardEvent) {
     if (this.wasKeyboardEvent) {
       keyBoardEvent.preventDefault();
@@ -791,9 +794,12 @@ export class SnakeComponent implements OnInit, AfterViewInit {
       case 'w':
         if (
           this.moveQueue[this.moveQueue.length - 1] !==
-            ('ArrowUp' && 'ArrowDown') &&
-          this.previousMove !== 'ArrowDown'
+          ('ArrowUp' && 'ArrowDown')
         ) {
+          if (this.previousMove === 'ArrowDown') {
+            this.contradictingMove = true;
+          }
+
           this.moveQueue.push('ArrowUp');
         }
         break;
@@ -801,9 +807,11 @@ export class SnakeComponent implements OnInit, AfterViewInit {
       case 's':
         if (
           this.moveQueue[this.moveQueue.length - 1] !==
-            ('ArrowDown' && 'ArrowUp') &&
-          this.previousMove !== 'ArrowUp'
+          ('ArrowDown' && 'ArrowUp')
         ) {
+          if (this.previousMove === 'ArrowUp') {
+            this.contradictingMove = true;
+          }
           this.moveQueue.push('ArrowDown');
         }
         break;
@@ -811,9 +819,11 @@ export class SnakeComponent implements OnInit, AfterViewInit {
       case 'a':
         if (
           this.moveQueue[this.moveQueue.length - 1] !==
-            ('ArrowLeft' && 'ArrowRight') &&
-          this.previousMove !== 'ArrowRight'
+          ('ArrowLeft' && 'ArrowRight')
         ) {
+          if (this.previousMove === 'ArrowRight') {
+            this.contradictingMove = true;
+          }
           this.moveQueue.push('ArrowLeft');
         }
         break;
@@ -821,9 +831,11 @@ export class SnakeComponent implements OnInit, AfterViewInit {
       case 'd':
         if (
           this.moveQueue[this.moveQueue.length - 1] !==
-            ('ArrowRight' && 'ArrowLeft') &&
-          this.previousMove !== 'ArrowLeft'
+          ('ArrowRight' && 'ArrowLeft')
         ) {
+          if (this.previousMove === 'ArrowLeft') {
+            this.contradictingMove = true;
+          }
           this.moveQueue.push('ArrowRight');
         }
         break;
