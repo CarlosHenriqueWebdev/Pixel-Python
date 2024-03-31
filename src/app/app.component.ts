@@ -9,5 +9,5 @@ import { SnakeComponent } from './snake/snake.component';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'angular-snake-game';
+
 }
