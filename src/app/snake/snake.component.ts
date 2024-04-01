@@ -81,7 +81,7 @@ export class SnakeComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     setTimeout(() => {
       this.didComponentLoad = true;
-    }, 2000);
+    }, 1400);
 
     this.initializeGame();
   }
