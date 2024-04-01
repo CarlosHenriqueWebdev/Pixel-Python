@@ -3,12 +3,12 @@
 
 @font-face {
   font-family: "StickNoBills"; /* Choose a name for your font */
-  src: url("./assets/stick.ttf") format("truetype"); /* Path to your font file */
+  src: url("/assets/fonts/stick.ttf") format("truetype"); /* Path to your font file */
   /* Add more src declarations if you have different font formats (e.g., woff, ttf) */
 }
 @font-face {
   font-family: "Roboto"; /* Choose a name for your font */
-  src: url("./assets/Roboto-Bold.ttf") format("truetype"); /* Path to your font file */
+  src: url("/assets/fonts/Roboto-Bold.ttf") format("truetype"); /* Path to your font file */
   /* Add more src declarations if you have different font formats (e.g., woff, ttf) */
 }
 

@@ -74,9 +74,15 @@ export class SnakeComponent implements OnInit, AfterViewInit {
   antiKeyHolding: boolean = false;
   fKeyPressed: boolean = false;
 
+  didComponentLoad: boolean = false;
+
   constructor(private renderer: Renderer2, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
+    setTimeout(() => {
+      this.didComponentLoad = true;
+    }, 2000);
+
     this.initializeGame();
   }
 
