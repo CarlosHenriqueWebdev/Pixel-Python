@@ -6,7 +6,7 @@ import { SnakeComponent } from './snake/snake.component';
   standalone: true,
   imports: [SnakeComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  styleUrl: './app.component.scss'
 })
 export class AppComponent {
 

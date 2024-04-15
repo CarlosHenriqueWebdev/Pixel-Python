@@ -91,7 +91,7 @@
           <div #gameCanvas class="grid-container">
             <div *ngFor="let row of boardRowsAmount" class="grid-row">
               <div
-                *ngFor="let col of boardCollumsAmount"
+                *ngFor="let col of boardColumnsAmount"
                 class="grid-cell"
               ></div>
             </div>
@@ -174,7 +174,6 @@
     </div>
   </footer>
 </div>
-
 
 <audio id="startGameAudio" src="/assets/media/startGameSound.wav"></audio>
 <audio id="snakeHitAudio" src="/assets/media/snake-hit.wav"></audio>
